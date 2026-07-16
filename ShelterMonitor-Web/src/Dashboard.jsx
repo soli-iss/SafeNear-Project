@@ -60,12 +60,13 @@ function Dashboard({ user, token, onLogout }) {
   const enrichSheltersData = (rawShelters) => {
     const savedExtras = JSON.parse(localStorage.getItem('safenear_shelters_extras') || '{}');
     return rawShelters.map(shelter => {
-      // חיפוש הנתונים לפי ID או לפי השם (במקרה שה-ID השתנה או לא חזר מהשרת בזמן)
+      // הוספנו בדיקה גם לפי shelter.name
       const extras = savedExtras[shelter.id] || savedExtras[shelter.name] || {};
       return {
         ...shelter,
         capacity: extras.capacity !== undefined ? extras.capacity : (shelter.capacity || ''),
-        has_wifi: extras.has_wifi !== undefined ? extras.has_wifi : (shelter.has_wifi || shelter.hasWifi || false)
+        has_wifi: extras.has_wifi !== undefined ? extras.has_wifi : (shelter.has_wifi || shelter.hasWifi || false),
+        notes: extras.notes || shelter.notes || '' // נוודא שגם הערות עוברות
       };
     });
   };
@@ -127,7 +128,7 @@ function Dashboard({ user, token, onLogout }) {
   };
 
   // --- Shelter Handlers ---
-  const handleShelterSubmit = async (e) => {
+const handleShelterSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     const method = editingShelter ? 'PUT' : 'POST';
@@ -142,8 +143,11 @@ function Dashboard({ user, token, onLogout }) {
         },
         body: JSON.stringify({
           name: shelterForm.name,
-          open: shelterForm.open ? 1 : 0,
           location: shelterForm.location,
+          notes: shelterForm.notes,
+          capacity: parseInt(shelterForm.capacity, 10) || 0,
+          wifi: shelterForm.wifi ? 1 : 0,
+          open: shelterForm.open ? 1 : 0,
           mapID: parseInt(shelterForm.mapID, 10),
           x: shelterForm.x !== undefined ? shelterForm.x : null,
           y: shelterForm.y !== undefined ? shelterForm.y : null
@@ -153,21 +157,23 @@ function Dashboard({ user, token, onLogout }) {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || data.message || 'הפעולה נכשלה');
 
-      // קבלת מזהה ייחודי: נשתמש ב-ID שחזר, ב-insertId, ב-editingShelter.id או בשם המקלט כעוגן קשיח
-      const targetId = editingShelter ? editingShelter.id : (data.id || data.insertId || shelterForm.name);
-
-      // שמירה כפולה (גם לפי השם וגם לפי ה-ID) ב-LocalStorage כדי למנוע אובדן נתונים
+      // שמירה ב-LocalStorage
       const savedExtras = JSON.parse(localStorage.getItem('safenear_shelters_extras') || '{}');
       const extrasPayload = {
         capacity: shelterForm.capacity ? parseInt(shelterForm.capacity, 10) : null,
-        has_wifi: shelterForm.has_wifi
+        has_wifi: shelterForm.wifi,
+        notes: shelterForm.notes
       };
 
-      savedExtras[targetId] = extrasPayload;
-      savedExtras[shelterForm.name] = extrasPayload; // גיבוי מבוסס שם (אם השרת לא מחזיר מזהה תקין)
-      
+      const newId = data.id || data.insertId || data.shelterId;
+      if (newId) savedExtras[newId] = extrasPayload;
+      if (shelterForm.name) savedExtras[shelterForm.name] = extrasPayload;
+
+      console.log("Saving to localStorage with name:", shelterForm.name, "Payload:", extrasPayload);
+    
       localStorage.setItem('safenear_shelters_extras', JSON.stringify(savedExtras));
 
+      // סיום פעולה
       showNotification(editingShelter ? 'המקלט עודכן בהצלחה!' : 'המקלט נוסף בהצלחה!');
       setShowShelterModal(false);
       setEditingShelter(null);
@@ -176,9 +182,9 @@ function Dashboard({ user, token, onLogout }) {
       fetchData();
     } catch (err) {
       showNotification(err.message, true);
+      setError(err.message);
     }
   };
-
 const handleToggleShelterStatus = async (shelter) => {
     try {
       const isClosing = shelter.open === 1 || shelter.open === true;
@@ -244,8 +250,16 @@ const handleToggleShelterStatus = async (shelter) => {
     }
   };
 
-  const handleEditShelterClick = (shelter) => {
+const handleEditShelterClick = (shelter) => {
+    // 1. שולפים את הנתונים מה-localStorage
+    const savedExtras = JSON.parse(localStorage.getItem('safenear_shelters_extras') || '{}');
+    
+    // תיקון: שולפים לפי ID ואם לא קיים - לפי השם (זה הגיבוי למקלט חדש)
+    const extras = savedExtras[shelter.id] || savedExtras[shelter.name] || {};
+
     setEditingShelter(shelter);
+    
+    // 2. מעדכנים את ה-State עם הנתונים מהשרת (shelter) ומה-localStorage (extras)
     setShelterForm({
       name: shelter.name,
       open: shelter.open === 1 || shelter.open === true,
@@ -253,9 +267,13 @@ const handleToggleShelterStatus = async (shelter) => {
       mapID: shelter.map_id || '',
       x: shelter.x !== undefined && shelter.x !== null ? shelter.x : null,
       y: shelter.y !== undefined && shelter.y !== null ? shelter.y : null,
-      capacity: shelter.capacity !== undefined && shelter.capacity !== null ? shelter.capacity : '',
-      has_wifi: shelter.has_wifi === 1 || shelter.has_wifi === true
+      
+      // השדות מה-localStorage עם גיבוי מה-shelter עצמו
+      capacity: extras.capacity !== undefined ? extras.capacity : (shelter.capacity || ''),
+      wifi: extras.has_wifi !== undefined ? extras.has_wifi : (shelter.has_wifi === 1 || shelter.has_wifi === true),
+      notes: extras.notes || shelter.notes || '' 
     });
+
     setShowShelterModal(true);
   };
 
@@ -482,14 +500,14 @@ const handleToggleShelterStatus = async (shelter) => {
               <button
                 className={`menu-item ${activeTab === 'users' ? 'active' : ''}`} 
                 onClick={() => { setActiveTab('users'); setActivePopupShelterId(null); }}
-                style={{ textAlign: 'right', width: '100%', background: 'none', border: 'none', cursor: 'pointer' }}
+                style={{ textAlign: 'right', width: '100%' }}
               >
                 ניהול המשתמשים
               </button>
               <button 
                 className={`menu-item ${activeTab === 'logs' ? 'active' : ''}`} 
                 onClick={() => { setActiveTab('logs'); setActivePopupShelterId(null); }}
-                style={{ textAlign: 'right', width: '100%', background: 'none', border: 'none', cursor: 'pointer' }}
+                style={{ textAlign: 'right', width: '100%' }}
               >
                 יומן פעילות
               </button>
@@ -674,7 +692,7 @@ const handleToggleShelterStatus = async (shelter) => {
           <div className="tab-pane">
             <header className="content-header search-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <h1>מפות עירונות</h1>
+                <h1>מפות עירוניות</h1>
               </div>
               <div style={{ display: 'flex', gap: '10px' }}>
                 {selectedMap && (
@@ -796,6 +814,19 @@ const handleToggleShelterStatus = async (shelter) => {
                                     {shelter.open ? 'פתוח לציבור' : 'סגור זמנית'}
                                   </span>
                                 </p>
+                                
+                                {/* כאן התיקון המינימלי להוספת ההערות */}
+                               {(() => {
+                                  const savedExtras = JSON.parse(localStorage.getItem('safenear_shelters_extras') || '{}');
+                                  
+                                  // תיקון: מחפשים לפי ID, ואם לא נמצא - לפי השם
+                                  const extras = savedExtras[shelter.id] || savedExtras[shelter.name] || {};
+                                  
+                                  // אם יש הערות ב-extras (מה-localStorage) או ב-shelter (מהשרת), נציג אותן
+                                  const notesToDisplay = extras.notes || shelter.notes;
+                                  
+                                  return notesToDisplay ? <p><strong>הערות:</strong> {notesToDisplay}</p> : null;
+                              })()}
 
                                 {/* הצגת אייקוני האבזור החדשים - קורא מה-LocalStorage ששומר הכל יציב */}
                                 <div className="shelter-amenities" style={{ display: 'flex', gap: '15px', marginTop: '10px', paddingTop: '8px', borderTop: '1px dashed var(--border-color)', justifyContent: 'flex-start', alignItems: 'center' }}>
@@ -887,17 +918,35 @@ const handleToggleShelterStatus = async (shelter) => {
                             
                             {/* צד שמאל: כפתור עריכה */}
                             {isAdmin && (
-                              <button 
-                                className="map-shelter-edit-btn" 
-                                title="ערוך פרטי מקלט"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleEditShelterClick(shelter);
-                                }}
-                                style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}
-                              >
-                                ✏️
-                              </button>
+                              <div style={{ display: 'flex', gap: '8px' }}> {/* עוטף את שניהם בשורה */}
+                                
+                                {/* כפתור העריכה הקיים */}
+                                <button 
+                                  className="map-shelter-edit-btn" 
+                                  title="ערוך פרטי מקלט"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleEditShelterClick(shelter);
+                                  }}
+                                  style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}
+                                >
+                                  ✏️
+                                </button>
+
+                                {/* כפתור המחיקה החדש */}
+                                <button 
+                                  className="map-shelter-delete-btn" 
+                                  title="מחק מקלט"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteShelter(shelter.id); // פונקציית המחיקה שלך
+                                  }}
+                                  style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}
+                                >
+                                  🗑️
+                                </button>
+
+                              </div>
                             )}
                           </div>
                         ))
@@ -1096,6 +1145,16 @@ const handleToggleShelterStatus = async (shelter) => {
                   placeholder="לדוגמה: כניסה א', קומה 1-"
                   value={shelterForm.location}
                   onChange={e => setShelterForm({ ...shelterForm, location: e.target.value })}
+                  style={{ textAlign: 'right' }}
+                />
+              </div>
+              <div className="form-group" style={{ textAlign: 'right' }}>
+                <label>הערות</label>
+                <input
+                  type="text"
+                  placeholder="הוסיפו הערות נוספות שחשוב לדעת"
+                  value={shelterForm.notes || ''}
+                  onChange={e => setShelterForm({ ...shelterForm, notes: e.target.value })}
                   style={{ textAlign: 'right' }}
                 />
               </div>
