@@ -185,6 +185,38 @@ const handleShelterSubmit = async (e) => {
       setError(err.message);
     }
   };
+ //תוספת חדשההההה
+const updateAllSheltersInMap = async (status) => {
+  // 1. שימוש ב-map_id (בדיוק כפי שהוא מופיע ב-Console)
+  const sheltersInMap = shelters.filter(s => String(s.map_id) === String(selectedMap.id));
+  
+  if (sheltersInMap.length === 0) {
+    showNotification('לא נמצאו מקלטים במפה זו');
+    return;
+  }
+  
+  try {
+    // 2. שליחת העדכון
+    await Promise.all(sheltersInMap.map(shelter => 
+      fetchWithAuth(`/api/shelters/${shelter.id}`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json', 
+          'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify({ ...shelter, open: status ? 1 : 0 }) 
+      })
+    ));
+    
+    showNotification(`כל ${sheltersInMap.length} המקלטים במפה עודכנו!`);
+    fetchData(); // רענון הנתונים מהשרת
+  } catch (err) {
+    console.error(err);
+    showNotification('שגיאה בעדכון המקלטים', true);
+  }
+};
+
+ // עד לפה תוספת חדשההה
 const handleToggleShelterStatus = async (shelter) => {
     try {
       const isClosing = shelter.open === 1 || shelter.open === true;
@@ -276,6 +308,8 @@ const handleEditShelterClick = (shelter) => {
 
     setShowShelterModal(true);
   };
+
+  
 
   const handleDeleteShelter = async (id) => {
     if (!window.confirm('האם אתה בטוח שברצונך למחוק מקלט זה?')) return;
@@ -490,7 +524,11 @@ const handleEditShelterClick = (shelter) => {
           </button>
           <button
             className={`menu-item ${activeTab === 'maps' ? 'active' : ''}`}
-            onClick={() => { setActiveTab('maps'); setActivePopupShelterId(null); }}
+            onClick={() => { 
+              setActiveTab('maps'); 
+              setActivePopupShelterId(null); 
+              setSelectedMap(null); // הוספנו את השורה הזאת כדי לאפס את המפה
+            }}
             style={{ textAlign: 'right', width: '100%' }}
           >
             מפות עירוניות
@@ -882,6 +920,38 @@ const handleEditShelterClick = (shelter) => {
 <div className="map-shelter-list" style={{ flex: '1 1 280px', maxWidth: '350px', width: '100%', background: 'var(--bg-secondary)', borderRadius: '12px', border: '1px solid var(--border-color)', padding: '15px', display: 'flex', flexDirection: 'column' }}>
                     <div className="map-shelter-list-header" style={{ textAlign: 'right', marginBottom: '15px' }}>
                       <h3 style={{ margin: 0, fontSize: '18px' }}>מקלטים באזור זה</h3>
+                    
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', marginTop: '10px', alignItems: 'flex-start' }}> 
+  <button 
+    onClick={() => updateAllSheltersInMap(true)} 
+    style={{ 
+      padding: '6px 12px', 
+      fontSize: '12px', 
+      backgroundColor: '#22c55e', /* ירוק */
+      color: 'white', 
+      border: 'none', 
+      borderRadius: '8px', /* פינות עגולות */
+      cursor: 'pointer' 
+    }}
+  >
+    פתח הכל
+  </button>
+  
+  <button 
+    onClick={() => updateAllSheltersInMap(false)} 
+    style={{ 
+      padding: '6px 12px', 
+      fontSize: '12px', 
+      backgroundColor: '#ef4444', /* אדום */
+      color: 'white', 
+      border: 'none', 
+      borderRadius: '8px', /* פינות עגולות */
+      cursor: 'pointer' 
+    }}
+  >
+    סגור הכל
+  </button>
+</div>
                     </div>
                     <div className="map-shelter-items" style={{ direction: 'rtl', display: 'flex', flexDirection: 'column', gap: '10px', flex: 1 }}>
                       {shelters.filter(s => s.map_id === selectedMap.id).length === 0 ? (
