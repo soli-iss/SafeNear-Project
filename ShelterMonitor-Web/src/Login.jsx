@@ -90,7 +90,7 @@ function LoginForm({ onLoginSuccess }) {
         {role === 'admin' && (
           <div style={{ 
             marginBottom: '20px', 
-            backgroundColor: 'rgba(30, 41, 59, 0.5)', 
+            backgroundColor: 'rgba(76, 175, 80, 0.07)', 
             padding: '20px', 
             borderRadius: '8px',
             border: '1px solid var(--border-color)',
@@ -100,7 +100,7 @@ function LoginForm({ onLoginSuccess }) {
           }}>
             {/* שדה שם משתמש */}
             <div className="input-group" style={{ margin: 0 }}>
-              <label style={{ color: 'var(--text-muted)', fontSize: '14px', fontWeight: 'bold' }}>שם משתמש</label>
+              <label style={{ color: '#285c2a', fontSize: '14px', fontWeight: 'bold' }}>שם משתמש</label>
               <input
                 type="text"
                 required
@@ -113,7 +113,7 @@ function LoginForm({ onLoginSuccess }) {
                   padding: '10px 12px',
                   border: '1px solid var(--border-color)',
                   borderRadius: '6px',
-                  backgroundColor: 'var(--bg-tertiary)',
+                  backgroundColor: 'var(--bg-secondary)',                   
                   color: 'var(--text-main)',
                   fontSize: '14px',
                   textAlign: 'center',
@@ -124,7 +124,7 @@ function LoginForm({ onLoginSuccess }) {
 
             {/* שדה סיסמה */}
             <div className="input-group" style={{ margin: 0 }}>
-              <label style={{ color: 'var(--text-muted)', fontSize: '14px', fontWeight: 'bold' }}>סיסמה</label>
+              <label style={{ color: '#285c2a', fontSize: '14px', fontWeight: 'bold' }}>סיסמה</label>
               <input
                 type="password"
                 required
@@ -137,7 +137,7 @@ function LoginForm({ onLoginSuccess }) {
                   padding: '10px 12px',
                   border: '1px solid var(--border-color)',
                   borderRadius: '6px',
-                  backgroundColor: 'var(--bg-tertiary)',
+                  backgroundColor: 'var(--bg-secondary)',                   
                   color: 'var(--text-main)',
                   fontSize: '14px',
                   textAlign: 'center',

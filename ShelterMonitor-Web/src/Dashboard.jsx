@@ -557,7 +557,7 @@ const handleToggleShelterStatus = async (shelter) => {
                   {isAdmin ? (
                     <>
                       <p>ברוכים הבאים, <strong>{user?.username}</strong>. אתם מחוברים כעת כ-<strong>צוות עירייה 🛠️</strong>.</p>
-                      <p>כנציגי עירייה, יש לכם הרשאות מלאות להוסיף, לערוך ולמחוק מקלטים או מפות, לנהל משתמשים ולצפות ביומן הפעילות של המערכת בזמן אמת.</p>
+                      <p>כנציגי עירייה, יש לכם הרשאות מלאות להוסיף, לערוך ולמחוק מקלטים או מפות  ולצפות ביומן הפעילות של המערכת בזמן אמת.</p>
                     </>
                   ) : (
                     <>
@@ -675,7 +675,6 @@ const handleToggleShelterStatus = async (shelter) => {
             <header className="content-header search-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <h1>מפות עירונות</h1>
-                <p>נהלו וצפו בשרטוטים האדריכליים ובמיקום המקלטים בעיר.</p>
               </div>
               <div style={{ display: 'flex', gap: '10px' }}>
                 {selectedMap && (
@@ -1129,7 +1128,7 @@ const handleToggleShelterStatus = async (shelter) => {
                       <span className="slider"></span>
                     </label>
                     <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-                      {shelterForm.has_wifi ? 'יש חיבור זמין ✅' : 'אין חיבור במקלט'}
+                      {shelterForm.has_wifi ? 'יש חיבור אינטרנט' :'אין חיבור אינטרנט'}
                     </span>
                   </div>
                 </div>
