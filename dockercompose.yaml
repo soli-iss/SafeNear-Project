@@ -1,0 +1,74 @@
+services:
+  mysql:
+    image: mysql:latest
+    restart: always
+    container_name: mysql-ShelterProject
+    env_file:
+      - .env
+    environment:
+      - MYSQL_AUTHENTICATION_PLUGIN=mysql_native_password
+      - MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+      - MYSQL_DATABASE=$MYSQL_DATABASE
+    networks:
+      - ShelterNetwork
+    ports:
+      - "$MYSQL_LOCAL_PORT:$MYSQL_DOCKER_PORT"
+    volumes:
+      - ./init-scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 2s
+      retries: 5
+
+  app:
+    depends_on:
+      mysql:
+        condition: service_healthy
+    build: ./ShelterMonitor
+    container_name: nodeServer-ShelterProject
+    env_file:
+      - .env
+    ports:
+      - "$NODE_DOCKER_PORT:$NODE_LOCAL_PORT"
+    environment:
+      - DB_HOST=mysql
+      - DB_USER=root
+      - DB_PASSWORD=$MYSQL_ROOT_PASSWORD
+      - DB_NAME=$MYSQL_DATABASE
+      - DB_PORT=$MYSQL_DOCKER_PORT
+    networks:
+      - ShelterNetwork
+    volumes:
+      - ./ShelterMonitor/public:/ShelterMonitor/public
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:$NODE_LOCAL_PORT/"]
+      interval: 5s
+      timeout: 2s
+      retries: 5
+      start_period: 5s
+
+  web:
+    depends_on:
+      mysql:
+        condition: service_healthy
+      app:
+        condition: service_healthy
+    build: ./ShelterMonitor-Web
+    container_name: web-ShelterProject
+    env_file:
+      - .env
+    environment:
+      - VITE_API_URL=http://localhost:$NODE_DOCKER_PORT
+    networks:
+      - ShelterNetwork
+    ports:
+      - "$WEB_DOCKER_PORT:$WEB_LOCAL_PORT"
+    
+volumes:
+  mysql_data:
+
+networks:
+  ShelterNetwork:
+    driver: bridge

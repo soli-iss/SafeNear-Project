@@ -1,0 +1,1436 @@
+/* ================================================================
+   ShelterMonitor Dashboard — Full Design System
+   ================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  --bg-primary: #0a0b10;
+  --bg-secondary: #121420;
+  --bg-tertiary: #1a1d30;
+  --bg-card: rgba(22, 26, 47, 0.6);
+
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(3, 78, 162, 0.4);
+
+  --text-main: #e2e8f0;
+  --text-muted: #94a3b8;
+
+  /* Holon Theme Colors */
+  --accent-color: #034EA2;       /* Holon Blue */
+  --accent-hover: #FCAF17;       /* Holon Gold */
+  --accent-glow: rgba(3, 78, 162, 0.35);
+
+  --color-success: #009649;      /* Holon Green */
+  --color-success-bg: rgba(0, 150, 73, 0.15);
+  --color-danger: #ef4444;       
+  --color-danger-bg: rgba(239, 68, 68, 0.15);
+  --color-warning: #FCAF17;      /* Holon Gold */
+  --color-info: #153F91;         /* Holon Dark Blue */
+  --color-info-bg: rgba(21, 63, 145, 0.15);
+
+  --shadow-sm: 0 2px 8px -2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 8px 24px -4px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 16px 40px -8px rgba(0, 0, 0, 0.8);
+
+  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  margin: 0;
+  padding: 0;
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--bg-tertiary); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-color); }
+
+/* ─── App Root ─────────────────────────────────────────────────── */
+.app-root {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  background: radial-gradient(circle at 80% 20%, rgba(3, 78, 162, 0.08) 0%, transparent 50%),
+              radial-gradient(circle at 10% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 50%);
+}
+
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  gap: 16px;
+  color: var(--text-muted);
+}
+
+/* ── Login ─────────────────────────────────────────────────────── */
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+  direction: rtl; /* יישור מלא מימין לשמאל לעברית */
+}
+
+.login-form {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: var(--shadow-lg);
+  animation: fadeIn 0.4s ease-out;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.app-logo {
+  font-size: 52px;
+  display: block;
+  margin-bottom: 12px;
+  animation: pulse 2.5s ease-in-out infinite alternate;
+}
+
+/* כותרת SafeNear מעוצבת בירוק בולט ומודרני */
+.login-header h1 {
+  font-size: 38px;
+  font-weight: 800;
+  margin: 0 0 8px;
+  color: #4caf50; /* ירוק SafeNear */
+  text-shadow: 0 2px 10px rgba(76, 175, 80, 0.2);
+}
+
+.login-header p {
+  color: var(--text-muted);
+  font-size: 15px;
+  margin: 0;
+  font-weight: 500;
+}
+
+.input-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: right; /* יישור הכותרות של השדות לימין */
+}
+
+.input-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.input-group input {
+  width: 100%;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  padding: 12px 16px;
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+  transition: var(--transition-fast);
+  box-sizing: border-box;
+  text-align: right;
+}
+
+.input-group input:focus {
+  border-color: #4caf50; /* מיקוד ירוק שתואם ללוגו */
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.25);
+}
+
+/* עיצוב מותאם אישית ומודרני לתיבת הבחירה (Select) */
+.form-select {
+  width: 100%;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  padding: 12px 16px;
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+  transition: var(--transition-fast);
+  box-sizing: border-box;
+  cursor: pointer;
+  appearance: none; /* מעלים את החץ המובנה הישן של הדפדפן */
+  direction: rtl;
+  text-align: right;
+  /* יצירת חץ מעוצב מותאם אישית שמתאים לפרופיל הכהה */
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left 16px center;
+  background-size: 16px;
+  padding-left: 40px; /* מרווח מצד שמאל בשביל החץ */
+}
+
+.form-select:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.25);
+}
+
+/* תיבת הזנת סיסמת עירייה - מתווספת בעיצוב ייחודי */
+.admin-password-box {
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(147, 197, 253, 0.2);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 20px;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.login-button {
+  background: #4caf50; /* כפתור ירוק SafeNear */
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 14px;
+  font-size: 17px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 12px;
+  transition: var(--transition-fast);
+  box-shadow: 0 4px 16px rgba(76, 175, 80, 0.25);
+}
+
+.login-button:hover:not(:disabled) {
+  background: #43a047; /* ירוק כהה יותר בריחוף */
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.35);
+}
+
+.login-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.login-error {
+  background: var(--color-danger-bg);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+  text-align: right; /* יישור השגיאה לימין */
+  direction: rtl;
+}
+
+.error-message {
+  font-size: 13.5px;
+  color: #fca5a5;
+  font-weight: 500;
+}
+/* ─── Loader Spinner ────────────────────────────────────────────── */
+.loader-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.loader-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 0.8s linear infinite;
+}
+
+/* ─── Dashboard Layout ──────────────────────────────────────────── */
+.dashboard-container {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.dashboard-sidebar {
+  width: 260px;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border-color);
+  padding: 28px 20px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+/* --- מיתוג ולוגו הסיידבר - ממורכז לחלוטין --- */
+.sidebar-brand {
+  display: flex;
+  flex-direction: column; /* מסדר את הלוגו והכותרת מלמעלה למטה */
+  align-items: center; /* ממרכז אופקית את הלוגו והכותרת */
+  justify-content: center;
+  gap: 8px; /* מרווח מדויק ביניהם */
+  margin-bottom: 28px;
+  width: 100%;
+  text-align: center;
+}
+
+.brand-logo { 
+  font-size: 26px; 
+  filter: drop-shadow(0 0 6px var(--accent-glow)); 
+  margin: 0 auto;
+}
+
+.sidebar-brand h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(135deg, #fff 0%, var(--accent-color) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+}
+
+/* --- פרופיל משתמש בסיידבר - ממורכז לחלוטין --- */
+.user-profile {
+  display: flex;
+  flex-direction: column; /* הופך את האוואטר והטקסט למבנה אנכי */
+  align-items: center; /* ממרכז את האוואטר והפרטים אופקית באזור */
+  justify-content: center;
+  gap: 12px;
+  background: var(--bg-tertiary);
+  padding: 16px 14px; /* הגדלנו מעט את הריפוד האנכי למראה סימטרי */
+  border-radius: var(--radius-md);
+  margin-bottom: 28px;
+  border: 1px solid var(--border-color);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.avatar {
+  font-size: 22px;
+  background: var(--bg-primary);
+  width: 44px; /* הגדלנו מעט את האוואטר שייראה יפה במרכז */
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.user-details {
+  text-align: center !important; /* דריסת יישור הימין/שמאל המקורי */
+  width: 100%;
+}
+
+.user-details h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 4px 0; /* מרווח קטן מתחת לשם */
+  color: var(--text-main);
+  text-align: center !important; /* ביטול ה-left */
+}
+
+.user-details .role {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--accent-color);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: block;
+  text-align: center !important; /* ביטול ה-left */
+}
+
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-grow: 1;
+}
+
+.menu-item {
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  padding: 11px 14px;
+  font-size: 14.5px;
+  font-weight: 500;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.menu-item:hover { background: rgba(255,255,255,0.03); color: var(--text-main); }
+
+.menu-item.active {
+  background: var(--accent-color);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(3, 78, 162, 0.25);
+}
+
+/* --- כפתור התנתקות ממורכז לחלוטין --- */
+.logout-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--color-danger);
+  border-radius: var(--radius-md);
+  padding: 11px;
+  font-size: 14.5px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  margin-top: auto;
+  
+  /* יישור ומרכוז הטקסט בפנים */
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+  width: 100%;
+}
+
+.logout-btn:hover {
+  background: var(--color-danger-bg);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+/* Main Content */
+.dashboard-content {
+  flex-grow: 1;
+  padding: 36px 40px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.content-header {
+margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: center; /* ממרכז את הכותרת הראשי ואת תת-הכותרת */
+  align-items: center;
+}
+
+.content-header h1 {
+  font-size: 30px;
+  font-weight: 700;
+  margin: 0 0 6px;
+  color: #fff;
+}
+
+.content-header p {
+  color: var(--text-muted);
+  font-size: 14.5px;
+  margin: 0;
+}
+
+.search-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+/* ─── Cards ──────────────────────────────────────────────────────── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(8px);
+  margin-bottom: 24px;
+}
+
+.card h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 16px;
+  color: #fff;
+  text-align: left;
+}
+
+.overview-summary {
+  text-align: center; /* ממרכז את פסקאות הטקסט בתוך הבלוק */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.overview-summary strong { color: var(--text-main); }
+
+/* ─── Stats Grid ─────────────────────────────────────────────────── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+/* --- עיצוב כרטיסי סטטיסטיקה ממורכזים לחלוטין --- */
+.stat-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px; /* ריפוד פנימי מעט מורחב למראה מאוורר */
+  display: flex;
+  flex-direction: column; /* מסדר את האלמנטים מלמעלה למטה */
+  align-items: center; /* ממרכז אופקית את כל התוכן בפנים */
+  justify-content: center; /* ממרכז אנכית את כל התוכן בפנים */
+  gap: 12px; /* מרווח יפה בין האייקון, הטקסט והמספר */
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-normal);
+  text-align: center;
+}
+
+.stat-card:hover { 
+  transform: translateY(-2px); 
+  box-shadow: var(--shadow-md); 
+  border-color: var(--border-hover); 
+}
+
+.stat-icon {
+  font-size: 28px;
+  width: 56px;
+  height: 56px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-color);
+  flex-shrink: 0;
+  margin: 0 auto; /* מוודא שהאייקון ממורכז אבסולוטית */
+}
+
+.stat-info { 
+  text-align: center; /* ממרכז את הטקסטים של הכותרת והערך */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.stat-info h3 { 
+  font-size: 13px; 
+  font-weight: 500; 
+  color: var(--text-muted); 
+  margin: 0 0 6px 0; /* מרווח קטן ומדויק מתחת לכותרת */
+}
+
+.stat-value { 
+  font-size: 28px; 
+  font-weight: 700; 
+  color: #fff; 
+  line-height: 1; /* מונע גובה שורה מיותר שמפריע למרכוז */
+}
+
+.accent-blue  { border-left: 4px solid var(--color-info); }
+.accent-green { border-left: 4px solid var(--color-success); }
+.accent-red   { border-left: 4px solid var(--color-danger); }
+.accent-purple { border-left: 4px solid var(--accent-color); }
+
+/* ─── Buttons ────────────────────────────────────────────────────── */
+.btn {
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 9px 18px;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--accent-color);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(3, 78, 162, 0.2);
+}
+.btn-primary:hover { background: var(--accent-hover); box-shadow: 0 6px 16px rgba(3, 78, 162, 0.35); }
+
+.btn-secondary {
+  background: var(--bg-tertiary);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+}
+.btn-secondary:hover { background: rgba(255,255,255,0.05); }
+
+.btn-danger { background: var(--color-danger); color: #fff; }
+.btn-danger:hover { background: #dc2626; }
+
+.btn-sm { padding: 5px 11px; font-size: 12.5px; border-radius: var(--radius-sm); }
+
+/* ─── Alerts ─────────────────────────────────────────────────────── */
+.alert {
+  padding: 13px 18px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  animation: slideDown 0.3s ease-out;
+  text-align: left;
+}
+.alert p { margin: 0; font-size: 14px; font-weight: 500; }
+
+.alert-danger { background: var(--color-danger-bg); border: 1px solid rgba(239,68,68,0.25); color: #fca5a5; }
+.alert-success { background: var(--color-success-bg); border: 1px solid rgba(16,185,129,0.25); color: #a7f3d0; }
+
+/* ─── Tables ─────────────────────────────────────────────────────── */
+.table-wrapper { overflow-x: auto; }
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14px;
+}
+
+.data-table th {
+  padding: 14px 18px;
+  border-bottom: 2px solid var(--border-color);
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 12.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.data-table td {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-main);
+  vertical-align: middle;
+}
+
+.data-table tbody tr:hover td { background: rgba(255,255,255,0.015); }
+.data-table .bold { font-weight: 600; color: #fff; }
+
+/* ─── Badges ─────────────────────────────────────────────────────── */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-open { background: var(--color-success-bg); color: #34d399; border: 1px solid rgba(16,185,129,0.2); }
+.status-closed { background: var(--color-danger-bg); color: #f87171; border: 1px solid rgba(239,68,68,0.2); }
+
+.status-badge.interactive { cursor: pointer; transition: var(--transition-fast); }
+.status-badge.interactive:hover { transform: scale(1.05); }
+
+.map-badge {
+  background: var(--color-info-bg);
+  color: #60a5fa;
+  border: 1px solid rgba(59,130,246,0.2);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 12.5px;
+  font-weight: 500;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.role-admin { background: rgba(139,92,246,0.15); color: #a78bfa; border: 1px solid rgba(139,92,246,0.2); }
+.role-user { background: rgba(148,163,184,0.15); color: #cbd5e1; border: 1px solid rgba(148,163,184,0.2); }
+
+.action-buttons { display: flex; gap: 6px; }
+
+.action-buttons button {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 5px 9px;
+  font-size: 12.5px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.btn-icon-edit { color: var(--color-warning); border-color: rgba(245,158,11,0.15) !important; }
+.btn-icon-edit:hover { background: rgba(245,158,11,0.1); border-color: var(--color-warning) !important; }
+.btn-icon-delete { color: var(--color-danger); border-color: rgba(239,68,68,0.15) !important; }
+.btn-icon-delete:hover { background: var(--color-danger-bg); border-color: var(--color-danger) !important; }
+
+/* ─── Maps Grid ──────────────────────────────────────────────────── */
+.maps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+  text-align: left;
+}
+
+.map-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-normal);
+}
+
+.map-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--border-hover); }
+
+.map-preview {
+  height: 140px;
+  background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-primary) 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid var(--border-color);
+  padding: 16px;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+.map-preview-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.6;
+}
+
+.map-placeholder-icon { font-size: 40px; margin-bottom: 6px; filter: drop-shadow(0 0 6px var(--accent-glow)); }
+
+.map-filename {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: monospace;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  position: relative;
+  z-index: 1;
+}
+
+.map-info { padding: 18px; }
+.map-info h3 { font-size: 16px; font-weight: 600; margin: 0 0 4px; color: #fff; }
+.map-info p { color: var(--text-muted); font-size: 12.5px; margin: 0 0 14px; }
+.map-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ─── Interactive Map View ───────────────────────────────────────── */
+.map-detail-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 20px;
+  align-items: start;
+}
+
+/* The blueprint canvas */
+.map-canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md), inset 0 0 80px rgba(3, 78, 162, 0.04);
+  background-color: #0c1029;
+  /* Blueprint grid */
+  background-image:
+    linear-gradient(rgba(3, 78, 162, 0.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(3, 78, 162, 0.10) 1px, transparent 1px),
+    linear-gradient(rgba(3, 78, 162, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(3, 78, 162, 0.04) 1px, transparent 1px);
+  background-size: 80px 80px, 80px 80px, 20px 20px, 20px 20px;
+  user-select: none;
+}
+
+.map-canvas-wrapper.admin-mode { cursor: crosshair; }
+
+.map-canvas-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Shelter pin markers */
+.shelter-pin {
+  position: absolute;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.shelter-pin:hover { transform: translate(-50%, -50%) scale(1.35); z-index: 20; }
+
+.pin-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2.5px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.pin-open .pin-dot {
+  background: var(--color-success);
+  animation: pinPulse 2s ease-out infinite;
+}
+
+.pin-closed .pin-dot {
+  background: var(--color-danger);
+}
+
+.pin-name {
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.9), 0 0 8px rgba(0,0,0,0.6);
+  margin-top: 3px;
+  white-space: nowrap;
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  letter-spacing: 0.2px;
+}
+
+.map-add-hint {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.65);
+  color: rgba(255,255,255,0.75);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 16px;
+  border-radius: 20px;
+  pointer-events: none;
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.1);
+  z-index: 5;
+  white-space: nowrap;
+}
+
+/* Shelter sidebar list */
+.map-shelter-list {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.map-shelter-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.map-shelter-list-header h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-main);
+}
+
+.map-shelter-items {
+  max-height: calc(100% - 60px);
+  overflow-y: auto;
+}
+
+.map-shelter-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: background 0.15s;
+  text-decoration: none;
+}
+
+.map-shelter-item:last-child { border-bottom: none; }
+.map-shelter-item:hover { background: rgba(255,255,255,0.03); }
+
+.shelter-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dot-open { background: var(--color-success); box-shadow: 0 0 6px rgba(16,185,129,0.4); }
+.dot-closed { background: var(--color-danger); }
+
+.shelter-item-details { flex: 1; text-align: left; min-width: 0; }
+.shelter-item-details strong { display: block; font-size: 13.5px; font-weight: 600; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.shelter-item-details small { font-size: 11.5px; color: var(--text-muted); }
+
+.placed-badge { font-size: 14px; flex-shrink: 0; }
+.placed-badge.unplaced { font-size: 12px; color: var(--text-muted); }
+
+/* Coordinates display in modal */
+.coords-display {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.clear-coords-btn {
+  background: transparent;
+  border: 1px solid rgba(239,68,68,0.3);
+  color: #f87171;
+  border-radius: var(--radius-sm);
+  padding: 3px 8px;
+  font-size: 11.5px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  white-space: nowrap;
+}
+
+.clear-coords-btn:hover { background: var(--color-danger-bg); }
+
+/* ─── Modals ──────────────────────────────────────────────────────── */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 5, 8, 0.78);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.modal-content {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 480px;
+  padding: 28px 32px;
+  box-shadow: var(--shadow-lg);
+  animation: scaleUp 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-sizing: border-box;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 14px;
+}
+
+.modal-header h2 { font-size: 20px; font-weight: 700; margin: 0; color: #fff; }
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 18px;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  line-height: 1;
+}
+.close-btn:hover { color: #fff; }
+
+.form-group {
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  text-align: left;
+}
+
+.form-group label { font-size: 14px; font-weight: 500; color: var(--text-muted); }
+
+.form-group input,
+.form-group select {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  padding: 11px 14px;
+  font-size: 14.5px;
+  font-family: inherit;
+  outline: none;
+  transition: var(--transition-fast);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.checkbox-group {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  margin-top: 6px;
+}
+
+.checkbox-group label { cursor: pointer; user-select: none; font-size: 14px; }
+.checkbox-group input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--accent-color); cursor: pointer; flex-shrink: 0; }
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 26px;
+}
+
+.empty-text { color: var(--text-muted); font-size: 14.5px; padding: 20px; font-style: italic; text-align: center; }
+
+.dashboard-recent { margin-top: 8px; }
+
+/* ─── Animations ─────────────────────────────────────────────────── */
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleUp {
+  from { transform: scale(0.94); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-8px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes pulse {
+  from { filter: drop-shadow(0 0 4px rgba(3, 78, 162, 0.15)); }
+  to   { filter: drop-shadow(0 0 16px rgba(3, 78, 162, 0.55)); }
+}
+
+@keyframes pinPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+  60%  { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .map-detail-layout { grid-template-columns: 1fr; }
+  .map-shelter-list { max-height: 300px; }
+  .map-shelter-items { max-height: 240px; }
+}
+
+@media (max-width: 768px) {
+  .dashboard-container { flex-direction: column; }
+  .dashboard-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+    padding: 16px;
+  }
+  .sidebar-menu { flex-direction: row; flex-wrap: wrap; }
+  .menu-item { padding: 8px 12px; font-size: 13px; }
+  .logout-btn { margin-top: 8px; }
+  .dashboard-content { padding: 20px 16px; }
+  .search-header { flex-direction: column; align-items: flex-start; }
+}
+/* --- עיצוב בלון מידע צף מעל סיכת מקלט במפה --- */
+.shelter-popup {
+  position: absolute;
+  bottom: 45px; /* גובה קבוע ויציב מעל הסיכה */
+  left: 0; /* מאפס את הנטייה שירש מהסיכה */
+  
+  /* מרכוז אבסולוטי מושלם ללא התנגשויות והטיות צידיות */
+  transform: translateX(calc(-50% + 10px)) !important; 
+  
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  width: 240px;
+  box-shadow: var(--shadow-lg);
+  z-index: 1000; /* מעל שאר האלמנטים במפה */
+  text-align: right;
+  direction: rtl;
+  
+  /* ביטול אנימציות תזוזה חדות שגורמות לקפיצות הצידה */
+  transition: none !important; 
+}
+
+/* המשולש הקטן בתחתית הבלון - יציב וממורכז */
+.shelter-popup::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) !important;
+  border-width: 8px;
+  border-style: solid;
+  border-color: var(--bg-secondary) transparent transparent transparent;
+  transition: none !important;
+}
+
+/* הגנה מוחלטת שלא יושפע מה-Hover וההרחבה של הסיכה עצמה */
+.shelter-popup:hover {
+  transform: translateX(calc(-50% + 10px)) !important;
+  scale: 1 !important;
+}
+
+.shelter-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 6px;
+}
+
+.shelter-popup-title {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.shelter-popup-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 0 4px;
+}
+
+.shelter-popup-close:hover {
+  color: var(--color-danger);
+}
+
+.shelter-popup-body p {
+  margin: 4px 0;
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+/* --- עיצוב מתג הזזה מודרני (Toggle Switch) --- */
+.switch-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-color);
+}
+
+.switch-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 22px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .3s;
+  border-radius: 22px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .3s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #4caf50;
+}
+
+input:checked + .slider:before {
+  transform: translateX(22px);
+}
+
+/* --- אפקט גדילה אלגנטי בריחוף ששומר על המרכוז ולא בורח הצידה --- */
+/* --- הגדרת המעבר החלק של הסיכה --- */
+.shelter-pin {
+  transition: transform 0.2s ease, scale 0.2s ease;
+}
+
+/* --- שימור המרכוז המדויק בכל מצבי הריחוף --- */
+.shelter-pin:hover {
+  transform: translate(-50%, -50%) !important; /* שומר על מרכוז הסיכה בדיוק מעל המיקום המקורי שלה */
+  cursor: pointer;
+}
+
+/* --- הקסם: הנקודה תגדל ב-15% בריחוף אך ורק כאשר בלון המידע סגור --- */
+.shelter-pin:not(:has(.shelter-popup)):hover {
+  scale: 1.15 !important; 
+}
+
+/* --- הגנה מוחלטת: כאשר בלון המידע פתוח, הגודל ננעל על 1 ולא משתנה כשהעכבר זז בפנים --- */
+.shelter-pin:has(.shelter-popup) {
+  scale: 1 !important; 
+}
+
+/* --- עיצוב התראות מערכת צפות (כדי שלא יזיזו את המפה) --- */
+/* --- עיצוב התראות מערכת צפות בגודל הטקסט (מבלי להזיז את המפה) --- */
+.alert {
+  position: fixed !important;
+  top: 20px; /* מרחק קבוע מתקרת המסך */
+  left: 50%;
+  transform: translateX(-50%); /* ממרכז את ההודעה בדיוק באמצע */
+  z-index: 9999; /* גורם לה להופיע מעל הכל */
+  padding: 10px 24px; /* ריפוד פנימי מעודכן ונקי */
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); /* צל עמוק ומקצועי */
+  animation: slideDownIn 0.3s ease-out; /* אנימציה חלקה של כניסה מלמעלה */
+  
+  width: max-content; /* הבועה תתכווץ ותתאים את עצמה בדיוק לאורך המילים! */
+  max-width: 90%; /* הגנה מפני חריגה במסכים קטנים או במובייל */
+  text-align: center;
+}
+
+/* התראה ירוקה (הצלחה - מקלט נפתח) */
+.alert-success {
+  background-color: #15803d !important; /* ירוק כהה ועמוק שמתאים לעיצוב */
+  border: 1px solid #22c55e !important;
+  color: #ffffff !important;
+}
+
+/* התראה אדומה (שגיאה / מקלט נסגר) */
+.alert-danger {
+  background-color: #991b1b !important; /* אדום כהה ועמוק */
+  border: 1px solid #ef4444 !important;
+  color: #ffffff !important;
+}
+
+/* אנימציית כניסה חלקה להודעה */
+@keyframes slideDownIn {
+  from {
+    top: -60px;
+    opacity: 0;
+  }
+  to {
+    top: 20px;
+    opacity: 1;
+  }
+}
+
+/* אנימציית כניסה חלקה להודעה */
+@keyframes slideDownIn {
+  from {
+    top: -60px;
+    opacity: 0;
+  }
+  to {
+    top: 20px;
+    opacity: 1;
+  }
+}
+
+/* --- עיצוב האייקונים החדשים בבלון המידע --- */
+.shelter-amenities {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border-color);
+  align-items: center;
+}
+
+.amenity-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-main);
+}
+
+.amenity-icon {
+  font-size: 16px;
+}
+
+/* שורת שדות כפולה למודאל */
+.form-row-flexible {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.form-row-flexible .form-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+/* --- כפתור עריכה מהירה ברשימת המקלטים הצדית --- */
+.map-shelter-edit-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 6px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  color: var(--text-muted);
+  margin-right: auto; /* דוחף את הכפתור הכי שמאלה בשורה */
+}
+
+.map-shelter-edit-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #3b82f6; /* הופך לכחול בריחוף */
+  transform: scale(1.1);
+}
+
+/* התאמת פריסת השורה ברשימה כדי שיהיה מקום לכפתור */
+.map-shelter-item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+/* =================================================== */
+/*             תוספות מרכוז ויישור חדשות               */
+/* =================================================== */
+
+/* 1. מרכוז תת-הכותרת של הלוגו בסיידבר */
+.brand-subtext {
+  text-align: center !important;
+  width: 100%;
+  display: block;
+}
+
+/* 2. מרכוז כותרת "סקירה מהירה" בתוך כרטיס דף הבית */
+.dashboard-recent .card h2 {
+  text-align: center !important;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+/* =================================================== */
+/*           יישור וסימטריה מלאה לטבלאות באתר          */
+/* =================================================== */
+
+.data-table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  direction: rtl !important; /* מוודא זרימה נכונה מימין לשמאל */
+}
+
+/* יישור אחיד וקשיח לימין של כל כותרת וכל נתון בטבלה */
+.data-table th, 
+.data-table td {
+  padding: 16px 20px !important;
+  text-align: right !important; /* יישור קשיח לימין של כל העמודות */
+  vertical-align: middle !important;
+}
+
+/* הדגשה קלה לכותרות הטבלה למראה מופרד ונקי */
+.data-table th {
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  letter-spacing: 0.3px !important;
+}
+
+/* מניעת שבירת שורות בשם המקלט כדי לשמור על מבנה יציב */
+.data-table td.bold {
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+}
+
+/* הגדרת רוחב קבוע ויציב לעמודת המזהה */
+.data-table td:first-child,
+.data-table th:first-child {
+  width: 80px !important;
+  font-weight: bold !important;
+}
