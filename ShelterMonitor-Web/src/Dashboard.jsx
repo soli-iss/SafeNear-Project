@@ -581,9 +581,28 @@ const handleToggleShelterStatus = async (shelter) => {
   </div>
   {isAdmin && (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center', marginTop: '15px' }}>
-      <button className="btn btn-primary" onClick={() => { /* הפונקציה שלך */ }}>
-        הוסף מקלט חדש
-      </button>
+<button 
+  className="btn btn-primary" 
+  onClick={() => {
+    // 1. מנקה את הטופס כדי שלא יהיו בו פרטים ממקלט קודם
+    setShelterForm({ 
+      name: '', 
+      open: false, 
+      location: '', 
+      mapID: maps[0]?.id || '', 
+      x: null, 
+      y: null, 
+      capacity: '', 
+      has_wifi: false 
+    });
+    // 2. מסמן שאין מקלט בעריכה (כי אנחנו מוסיפים חדש)
+    setEditingShelter(null);
+    // 3. פותח את המודאל
+    setShowShelterModal(true);
+  }}
+>
+  הוסף מקלט חדש
+</button>
       <div style={{ display: 'flex', gap: '10px' }}>
         <button className="btn" style={{ backgroundColor: '#10b981', color: '#fff' }} onClick={() => handleToggleAllShelters(true)}>
           פתח הכל
@@ -830,7 +849,7 @@ const handleToggleShelterStatus = async (shelter) => {
                     )}
                   </div>
 
-                  <div className="map-shelter-list" style={{ flex: '1 1 280px', maxWidth: '350px', width: '100%', background: 'var(--bg-secondary)', borderRadius: '12px', border: '1px solid var(--border-color)', padding: '15px', display: 'flex', flexDirection: 'column' }}>
+<div className="map-shelter-list" style={{ flex: '1 1 280px', maxWidth: '350px', width: '100%', background: 'var(--bg-secondary)', borderRadius: '12px', border: '1px solid var(--border-color)', padding: '15px', display: 'flex', flexDirection: 'column' }}>
                     <div className="map-shelter-list-header" style={{ textAlign: 'right', marginBottom: '15px' }}>
                       <h3 style={{ margin: 0, fontSize: '18px' }}>מקלטים באזור זה</h3>
                     </div>
@@ -849,59 +868,74 @@ const handleToggleShelterStatus = async (shelter) => {
                                 handleEditShelterClick(shelter);
                               }
                             }}
-                            style={{ cursor: 'pointer' }}
+                            style={{ 
+                                cursor: 'pointer', 
+                                display: 'flex', 
+                                justifyContent: 'space-between', 
+                                alignItems: 'center', 
+                                padding: '8px 0',
+                                borderBottom: '1px solid var(--border-color)' 
+                            }}
                           >
-                            <div className={`shelter-status-dot ${shelter.open ? 'dot-open' : 'dot-closed'}`}></div>
-                            <div className="shelter-item-details" style={{ marginRight: '10px' }}>
-                              <strong>{shelter.name}</strong>
-                              <small style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)' }}>{shelter.location}</small>
+                            {/* צד ימין: שם ותיאור + הנקודה */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <div style={{ textAlign: 'right' }}>
+                                    <div style={{ fontWeight: 'bold' }}>{shelter.name}</div>
+                                    <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{shelter.location}</div>
+                                </div>
+                                <div className={`shelter-status-dot ${shelter.open ? 'dot-open' : 'dot-closed'}`} style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: shelter.open ? '#10b981' : '#ef4444' }}></div>
                             </div>
                             
-                            {/* כפתור עריכה מהירה לעירייה בלבד */}
+                            {/* צד שמאל: כפתור עריכה */}
                             {isAdmin && (
                               <button 
                                 className="map-shelter-edit-btn" 
                                 title="ערוך פרטי מקלט"
                                 onClick={(e) => {
-                                  e.stopPropagation(); // מונע פתיחה של הבלון במפה במקביל
+                                  e.stopPropagation();
                                   handleEditShelterClick(shelter);
                                 }}
+                                style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}
                               >
                                 ✏️
                               </button>
                             )}
-
-                            <span className={`placed-badge ${shelter.x !== null ? '' : 'unplaced'}`} style={{ marginRight: isAdmin ? '8px' : 'auto' }}>
-                              {shelter.x !== null ? 'ממוקם' : 'לא ממוקם'}
-                            </span>
                           </div>
                         ))
                       )}
                     </div>
+                  
 
                     {/* כפתור הוספת מקלט מהיר בתחתית הרשימה - עירייה בלבד */}
                     {isAdmin && (
-                      <button 
-                        className="btn btn-primary" 
-                        onClick={() => {
-                          setEditingShelter(null);
-                          // הגדרת המפה הנוכחית כברירת מחדל בטופס
-                          setShelterForm({ 
-                            name: '', 
-                            open: false, 
-                            location: '', 
-                            mapID: selectedMap.id || '', 
-                            x: null, 
-                            y: null, 
-                            capacity: '', 
-                            has_wifi: false 
-                          });
-                          setShowShelterModal(true);
-                        }}
-                        style={{ marginTop: '20px', width: '100%', padding: '10px' }}
-                      >
-                        הוסף מקלט חדש
-                      </button>
+                      <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+                        <button 
+                          className="btn btn-primary" 
+                          onClick={() => {
+                            setEditingShelter(null);
+                            setShelterForm({ 
+                              name: '', 
+                              open: false, 
+                              location: '', 
+                              mapID: selectedMap.id || '', 
+                              x: null, 
+                              y: null, 
+                              capacity: '', 
+                              has_wifi: false 
+                            });
+                            setShowShelterModal(true);
+                          }}
+                          style={{ 
+                            width: 'auto',          // הכפתור יתפוס רק את המקום שהוא צריך
+                            minWidth: '200px',      // כדי שלא יהיה קטן מדי
+                            padding: '12px 40px',   // מרווחים פנימיים יפים
+                            borderRadius: '12px',
+                            textAlign: 'center'
+                          }}
+                        >
+                          הוסף מקלט חדש
+                        </button>
+                      </div>
                     )}
                   </div>
                 </div>
