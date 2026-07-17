@@ -65,8 +65,7 @@ function Dashboard({ user, token, onLogout }) {
       return {
         ...shelter,
         capacity: extras.capacity !== undefined ? extras.capacity : (shelter.capacity || ''),
-        has_wifi: extras.has_wifi !== undefined ? extras.has_wifi : (shelter.has_wifi || shelter.hasWifi || false),
-        notes: extras.notes || shelter.notes || '' // נוודא שגם הערות עוברות
+        has_wifi: extras.has_wifi !== undefined ? !!extras.has_wifi : !!(shelter.has_wifi || shelter.hasWifi),        notes: extras.notes || shelter.notes || '' // נוודא שגם הערות עוברות
       };
     });
   };
@@ -146,7 +145,9 @@ const handleShelterSubmit = async (e) => {
           location: shelterForm.location,
           notes: shelterForm.notes,
           capacity: parseInt(shelterForm.capacity, 10) || 0,
-          wifi: shelterForm.wifi ? 1 : 0,
+          // כאן קראנו ל-has_wifi כדי להתאים ל-state של הטופס
+          wifi: shelterForm.has_wifi ? 1 : 0,
+          has_wifi: shelterForm.has_wifi ? 1 : 0, 
           open: shelterForm.open ? 1 : 0,
           mapID: parseInt(shelterForm.mapID, 10),
           x: shelterForm.x !== undefined ? shelterForm.x : null,
@@ -157,11 +158,11 @@ const handleShelterSubmit = async (e) => {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || data.message || 'הפעולה נכשלה');
 
-      // שמירה ב-LocalStorage
+      // שמירה ב-LocalStorage: נשתמש ב-wifi כשם השדה המאוחד
       const savedExtras = JSON.parse(localStorage.getItem('safenear_shelters_extras') || '{}');
       const extrasPayload = {
         capacity: shelterForm.capacity ? parseInt(shelterForm.capacity, 10) : null,
-        has_wifi: shelterForm.wifi,
+        has_wifi: shelterForm.has_wifi, // קישור לערך מהטופס
         notes: shelterForm.notes
       };
 
@@ -169,14 +170,15 @@ const handleShelterSubmit = async (e) => {
       if (newId) savedExtras[newId] = extrasPayload;
       if (shelterForm.name) savedExtras[shelterForm.name] = extrasPayload;
 
-      console.log("Saving to localStorage with name:", shelterForm.name, "Payload:", extrasPayload);
+      console.log("Saving to localStorage. Payload:", extrasPayload);
     
       localStorage.setItem('safenear_shelters_extras', JSON.stringify(savedExtras));
 
-      // סיום פעולה
+      // סיום פעולה וניקוי טופס
       showNotification(editingShelter ? 'המקלט עודכן בהצלחה!' : 'המקלט נוסף בהצלחה!');
       setShowShelterModal(false);
       setEditingShelter(null);
+      // תיקון הניקוי: שימוש ב-has_wifi כדי להתאים לטופס
       setShelterForm({ name: '', open: false, location: '', mapID: '', x: null, y: null, capacity: '', has_wifi: false });
       setAddingShelterCoords(null);
       fetchData();
@@ -302,7 +304,7 @@ const handleEditShelterClick = (shelter) => {
       
       // השדות מה-localStorage עם גיבוי מה-shelter עצמו
       capacity: extras.capacity !== undefined ? extras.capacity : (shelter.capacity || ''),
-      wifi: extras.has_wifi !== undefined ? extras.has_wifi : (shelter.has_wifi === 1 || shelter.has_wifi === true),
+      has_wifi: extras.has_wifi !== undefined ? extras.has_wifi : (shelter.has_wifi === 1 || shelter.has_wifi === true),
       notes: extras.notes || shelter.notes || '' 
     });
 
@@ -875,9 +877,10 @@ const handleEditShelterClick = (shelter) => {
                                       {shelter.capacity !== undefined && shelter.capacity !== null && shelter.capacity !== '' ? shelter.capacity : 'לא מוגדר'}
                                     </strong>
                                   </div>
-
+                                  {console.log("Shelter object in popup:", shelter)}
                                   <div className="amenity-item" style={{ display: 'flex', alignItems: 'center' }}>
-                                    {(shelter.has_wifi === 1 || shelter.has_wifi === true || shelter.hasWifi === 1 || shelter.hasWifi === true) ? (
+                                    {/* הוספנו את הבדיקה גם ל-wifi כדי להתאים למה ששמרנו ב-localStorage */}
+                                    {(shelter.wifi === 1 || shelter.wifi === true || shelter.has_wifi === 1 || shelter.has_wifi === true || shelter.hasWifi === 1 || shelter.hasWifi === true) ? (
                                       <span className="amenity-icon" title="יש אינטרנט אלחוטי זמין ✅" style={{ fontSize: '18px' }}>📶</span>
                                     ) : (
                                       <span className="amenity-icon" title="אין אינטרנט אלחוטי ❌" style={{ fontSize: '18px' }}>❌📶</span>
@@ -917,41 +920,43 @@ const handleEditShelterClick = (shelter) => {
                     )}
                   </div>
 
-<div className="map-shelter-list" style={{ flex: '1 1 280px', maxWidth: '350px', width: '100%', background: 'var(--bg-secondary)', borderRadius: '12px', border: '1px solid var(--border-color)', padding: '15px', display: 'flex', flexDirection: 'column' }}>
+                  <div className="map-shelter-list" style={{ flex: '1 1 280px', maxWidth: '350px', width: '100%', background: 'var(--bg-secondary)', borderRadius: '12px', border: '1px solid var(--border-color)', padding: '15px', display: 'flex', flexDirection: 'column' }}>
                     <div className="map-shelter-list-header" style={{ textAlign: 'right', marginBottom: '15px' }}>
                       <h3 style={{ margin: 0, fontSize: '18px' }}>מקלטים באזור זה</h3>
                     
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', marginTop: '10px', alignItems: 'flex-start' }}> 
-  <button 
-    onClick={() => updateAllSheltersInMap(true)} 
-    style={{ 
-      padding: '6px 12px', 
-      fontSize: '12px', 
-      backgroundColor: '#22c55e', /* ירוק */
-      color: 'white', 
-      border: 'none', 
-      borderRadius: '8px', /* פינות עגולות */
-      cursor: 'pointer' 
-    }}
-  >
-    פתח הכל
-  </button>
-  
-  <button 
-    onClick={() => updateAllSheltersInMap(false)} 
-    style={{ 
-      padding: '6px 12px', 
-      fontSize: '12px', 
-      backgroundColor: '#ef4444', /* אדום */
-      color: 'white', 
-      border: 'none', 
-      borderRadius: '8px', /* פינות עגולות */
-      cursor: 'pointer' 
-    }}
-  >
-    סגור הכל
-  </button>
-</div>
+                      {isAdmin && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', marginTop: '10px', alignItems: 'flex-start' }}> 
+                          <button 
+                            onClick={() => updateAllSheltersInMap(true)} 
+                            style={{ 
+                              padding: '6px 12px', 
+                              fontSize: '12px', 
+                              backgroundColor: '#22c55e', /* ירוק */
+                              color: 'white', 
+                              border: 'none', 
+                              borderRadius: '8px', /* פינות עגולות */
+                              cursor: 'pointer' 
+                            }}
+                          >
+                            פתח הכל
+                          </button>
+                          
+                          <button 
+                            onClick={() => updateAllSheltersInMap(false)} 
+                            style={{ 
+                              padding: '6px 12px', 
+                              fontSize: '12px', 
+                              backgroundColor: '#ef4444', /* אדום */
+                              color: 'white', 
+                              border: 'none', 
+                              borderRadius: '8px', /* פינות עגולות */
+                              cursor: 'pointer' 
+                            }}
+                          >
+                            סגור הכל
+                          </button>
+                        </div>
+                      )}
                     </div>
                     <div className="map-shelter-items" style={{ direction: 'rtl', display: 'flex', flexDirection: 'column', gap: '10px', flex: 1 }}>
                       {shelters.filter(s => s.map_id === selectedMap.id).length === 0 ? (
